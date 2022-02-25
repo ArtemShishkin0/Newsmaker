@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Register | Newsmaker {% endblock %}
+    {% load static %}
+    {% block content %}
+    <div class="rowc-publishing">
+      {% for article in articles %}
+        <div class="article-row">
+            <div class="item-1">
+              <div class="item-content shadow">
+                <h5> <a href="article/{{ article.id }}"> {{ article.title }} </a></h5>
+                <p> {{ article.description }}</p>
+                <span class="author">
+                  <a href="/profile/{{article.author}}"> {{ article.author }} </a> </span>
+                <div class="info">
+                <span class="category">{{ article.category }}</span>
+                <span class="time">created {{ article.whenpublished }} </span>
+               </div>
+              </div>
+            </div>
+        </div>
+    {% endfor %}
+              </div>
+  {% endblock %}

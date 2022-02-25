@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Register | Newsmaker {% endblock %}
+    {% load static %}
+    {% block content %}
+    <div class="containerf">
+      <form method="post" id="test">
+        {% csrf_token %}
+        <div class="mb-3" id="userfield">
+          <label for="user" class="form-label">Username</label>
+          <input type="user" name="user" class="form-control" id="user" aria-describedby="user">
+        </div>
+  <div class="mb-3" id="emailfield">
+    <label for="email" class="form-label">Email address</label>
+    <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">
+    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+  </div>
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" name="password" class="form-control" id="password">
+  </div>
+  <button type="submit" class="btn btn-primary right blue" id="submitbtn">Continue</button>
+</form>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+          $('#test').keyup(function () {
+              $.ajax({
+                  data: $(this).serialize(),
+                  url: "{% url 'validate_data' %}",
+                  success: function (response) {
+                      if (response.username_is_taken == true) {
+                          $('#userfield').removeClass('is-valid').addClass('is-invalid');
+                          var errormsg = document.getElementById('usernameError')
+                          if (!errormsg){
+                          $('#userfield').after('<div class="invalid-feedback d-block formerror" id="usernameError">This username is not available!</div>')
+                          $('#submitbtn').addClass('disabled')
+                          window.disabled_1 = 1;
+                        }
+                      }
+                      else {
+                          $('#usernameError').remove();
+                          window.disabled_1 = 0;
+                          if ((window.disabled_1 == 0) & (window.disabled_2 == 0)){
+                          $('#submitbtn').removeClass('disabled')
+                        }
+
+
+                      }
+                    if (response.email_is_taken == true){
+
+                      var errormsg = document.getElementById('emailError')
+                      var btncheck = document.getElementById('submitbtn')
+                      if (!errormsg){
+                      $('#emailHelp').addClass('displaynone')
+                      $('#emailfield').after('<div class="invalid-feedback d-block formerror" id="emailError">This email address is not available!</div>')
+                      $('#submitbtn').addClass('disabled')
+                      window.disabled_2 = 1;
+                    }
+                  }
+                  else {
+
+                      $('#emailError').remove();
+                      window.disabled_2 = 0;
+                      if ((window.disabled_1 == 0) & (window.disabled_2 == 0)){
+                      $('#submitbtn').removeClass('disabled')
+                    }
+                      $('#emailHelp').removeClass('displaynone')
+                    }
+                  },
+                  error: function (response) {
+                      console.log(response.responseJSON.errors)
+                  }
+              });
+              return false;
+          });
+      })
+     </script>
+  {% endblock %}

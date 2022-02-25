@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% block title %} {{ req_user.username | title }} | Newsmaker {% endblock %}
+    {% load static %}
+    {% block content %}
+    <div class="profile-content">
+      {% if req_user == cur_user %}
+      <h1 class="mb-5"> {{ cur_user.username | title }}'s Profile </h1>
+      <div class="bg-white shadow rounded-lg d-block d-sm-flex">
+				<div class="profile-tab-nav border-right">
+					<div class="p-4">
+						<div class="img-circle text-center mb-3">
+              <form method="POST" enctype="multipart/form-data" id="img">
+                {% csrf_token %}
+                <label>
+							<img type="image" src="/media/{{ cur_user_info.photo }}" alt="Image" class="shadow circleimg" id="userimg">
+              <input type="file" id="userimg" style="display: none" name="userimg" />
+
+                </label>
+              </form>
+						</div>
+						<h4 class="text-center">{{ cur_user.first_name }} {{ cur_user.last_name }}</h4>
+					</div>
+					<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+						<a class="nav-link active show" id="account-tab" data-toggle="pill" href="#account" role="tab" aria-controls="account" aria-selected="true">
+							<i class="fa fa-home text-center mr-1"></i>
+							Account
+						</a>
+						<a class="nav-link" id="password-tab" data-toggle="pill" href="#password" role="tab" aria-controls="password" aria-selected="false">
+							<i class="fa fa-key text-center mr-1"></i>
+							Password
+						</a>
+            <a class="nav-link" id="notification-tab" data-toggle="pill" href="#notification" role="tab" aria-controls="notification" aria-selected="false">
+							<i class="fa fa-user text-center mr-1"></i>
+							Privacy
+						</a>
+
+					</div>
+				</div>
+				<div class="tab-content p-4 p-md-5" id="v-pills-tabContent">
+					<div class="tab-pane fade active show" id="account" role="tabpanel" aria-labelledby="account-tab">
+						<h3 class="mb-4">Account Settings</h3>
+            <form method="POST" id="data">
+              {% csrf_token %}
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+								  	<label>First Name</label>
+								  	<input type="text" class="form-control" value="{{ cur_user.first_name}}" name="first_name">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+								  	<label>Last Name</label>
+								  	<input type="text" class="form-control" value="{{ cur_user.last_name }}" name="last_name">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+								  	<label>Email</label>
+								  	<input type="text" class="form-control" value="{{ cur_user.email}}" name="email">
+                    {% if cur_user_info.show_email %} <div id="emailHelp" class="form-text">Everyone will see your email address. To disable it go to privacy settings.</div> {% endif %}
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+								  	<label>Age</label>
+								  	<input type="text" class="form-control" {% if cur_user_info.age != 0 %} value="{{ cur_user_info.age }} " {% endif %} name="age">
+								</div>
+							</div>
+							<div class="col-md-6">
+                <div class="form-group">
+								  	<label>Phone number</label>
+								  	<input type="text" class="form-control" {% if cur_user_info.phone != 'None' %} value="{{ cur_user_info.phone }}" {% endif %} name="phone">
+                    {% if cur_user_info.show_phone %}<div id="emailHelp" class="form-text">Everyone will see your phone number. To disable it go to privacy settings.</div> {% endif %}
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="form-group">
+								  	<label>About</label>
+									<textarea class="form-control" rows="4" name="about">{{ cur_user_info.about }}</textarea>
+								</div>
+							</div>
+              <div>
+              <input type="button" class="btn btn-primary right" name="Update" value="Update" onclick="submitForms()">
+              </div>
+              </form>
+						</div>
+
+
+					</div>
+					<div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
+            <form method="POST">
+              {% csrf_token %}
+						<h3 class="mb-4">Password Settings</h3>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+								  	<label>Old password</label>
+								  	<input type="password" class="form-control" name="oldpassword">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+								  	<label>New password</label>
+								  	<input type="password" class="form-control" name="newpassword">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+								  	<label>Confirm new password</label>
+								  	<input type="password" class="form-control" name="confirmpassword">
+								</div>
+							</div>
+						</div>
+            <input type="submit" class="btn btn-primary right" name="password" value="Update">
+						<div>
+						</div>
+            </form>
+					</div>
+
+          <div class="tab-pane fade" id="notification" role="tabpanel" aria-labelledby="notification-tab">
+            <form method="POST">
+              {% csrf_token %}
+						<h3 class="mb-4">Privacy Settings</h3>
+						<div class="form-group">
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" value="True" id="privacy1" name="email_privacy"{% if cur_user_info.show_email %} checked {% endif %}>
+								<label class="form-check-label" for="privacy1">
+									Show email in  user profile
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" value="True" id="privacy2" name="phone_privacy" {% if cur_user_info.show_phone %} checked {% endif %}>
+								<label class="form-check-label" for="privacy2">
+									Show phone in user profile
+								</label>
+							</div>
+						</div>
+            <input type="submit" class="btn btn-primary right" name="privacy" value="Update">
+            </form>
+					</div>
+
+
+     </div>
+      {% else %}
+      <h1 class="mb-5"> {{ req_user.username | title }}'s Profile </h1>
+      <div class="bg-white shadow rounded-lg d-block d-sm-flex">
+        <div class="profile-tab-nav border-right">
+          <div class="p-4">
+            <div class="img-circle text-center mb-3">
+              <img src="/media/{{ req_user_info.photo }}" alt="Image" class="shadow">
+            </div>
+            <h4 class="text-center">{{ req_user.first_name }} {{ req_user.last_name }}</h4>
+          </div>
+          <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active show" id="account-tab" data-toggle="pill" href="#account" role="tab" aria-controls="account" aria-selected="true">
+              <i class="fa fa-home text-center mr-1"></i>
+              Account
+            </a>
+
+          </div>
+        </div>
+        <div class="tab-content p-4 p-md-5" id="v-pills-tabContent">
+          <div class="tab-pane fade active show" id="account" role="tabpanel" aria-labelledby="account-tab">
+            <h3 class="mb-4">Account Settings</h3>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" class="form-control" value="{{ req_user.first_name}}" name="first_name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" class="form-control" value="{{ req_user.last_name }}" name="last_name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" {% if req_user_info.show_email %}value="{{ req_user.email}}" {% endif %} name="email">
+
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="text" class="form-control" value="{{ req_user_info.age }}" name="age">
+                </div>
+              </div>
+              <div class="md-6">
+                <div class="form-group">
+                    <label>Phone number</label>
+                    <input type="text" class="form-control" {% if req_user_info.show_phone %} value="{{ req_user_info.phone }}" {% endif %} name="phone">
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                    <label>About</label>
+                  <textarea class="form-control" rows="4" name="about">{{ req_user_info.about }}</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+      </div>
+      {% endif %}
+      </div>
+     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+      <script>
+        submitForms = function(){
+            document.getElementById("img").submit();
+            document.getElementById("data").submit();
+
+          }
+      </script>
+  {% endblock %}

@@ -1,0 +1,55 @@
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+      <link href="{% static 'css/styles.css' %}" rel="stylesheet" type="text/css">
+      <title>{{ article.title }}</title>
+  </head>
+  <body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="page-wrap">
+      <div class="page">
+        <main class="main-article">
+          <header class="article-header">
+            <h1> {{ article.title }} </h1>
+            <address>
+              <a href="http://127.0.0.1:8000/profile/{{ article.author }}"> {{ article.author }}</a>
+
+              <time>
+                {{ article.created|date:"F j, Y" }}
+              </time>
+            </address>
+          </header>
+
+    <article class="article-container">
+      <div class="article-content">
+        <hr>
+        <img src="/media/{{article.thumbnail }}" class="article-thumbnail-img">
+        <hr> </hr>
+        <p class="article-content-img"> {{ article.content|safe }} </p>
+      </div>
+    </article>
+
+        </main>
+      </div>
+    </div>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script type="text/javascript">
+        function progressBar() {
+      // Узнаем на сколько страница прокручена
+      let scroll = document.body.scrollTop || document.documentElement.scrollTop;
+      // Узнаем высоту всей страницы
+      let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      // Получаем в % на сколько прокручена страница
+      let scrolled = scroll / height * 100;
+
+      // Подставляем % прокрутки в ширину нашей линии
+      document.getElementById('progressBar').style.width = scrolled + '%';
+    }
+
+    // Запускаем функцию, когда пользователя скролит
+    window.addEventListener('scroll', progressBar);
+        </script>
+  </body>

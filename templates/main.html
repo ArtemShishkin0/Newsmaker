@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+    {% load static %}
+    {% block content %}
+    <div class="sort">
+      <div class="col-s">
+        <h5>Sort by </h5> </div>
+        <div class="col-sm inl">
+        <form action="" method="post">
+          {% csrf_token %}
+         <select name="select-category">
+           {% if not selected %}
+           <option value="">category</option>
+           {% else %}
+           <option value="{{ selected }}">{{ selected }}</option>
+           {% endif %}
+           {% for choice in choices %}
+           <option value="{{ choice }}"> {{ choice }} </option>
+           {% endfor %}
+         </select>
+         <select name="select-timesort">
+           {% if not timesorted %}
+           <option value="">time</option>
+           {% else %}
+           <option value="{{ timesorted }}">{{ timesorted }}</option>
+           {% endif %}
+           <option value="Oldest">Oldest</option>
+           <option value="Newest">Newest</option>
+
+         </select>
+         <input type="submit" name="form-id" value="Sort" class="sortbtn">
+         <input type="submit" name="form-id" value="Clear" class="clearbtn">
+        </form>
+      </div>
+    </div>
+    <div class="rowc">
+      {% for article in articles %}
+        <div class="col-md-4 betw">
+            <div class="item-1">
+              <div class="item-thumb _ibg shadow">
+                <img src="/media/{{ article.thumbnail }}" alt="Article image">
+               </div>
+              <div class="item-content shadow">
+                <div>
+                <h5> <a href="article/{{ article.id }}"> {{ article.title }} </a></h5>
+                <p> {{ article.description }}</p>
+                </div>
+                <div>
+                <span class="author">
+                  <a href="/profile/{{article.author}}"> {{ article.author }} </a> </span>
+                <div class="info">
+                <span class="category">{{ article.category }}</span>
+                <span class="time">posted {{ article.whenpublished }} </span>
+                </div>
+               </div>
+
+
+               </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endblock %}
