@@ -10,7 +10,6 @@ from users.views import is_moderator
 
 def article_main(request):
     if request.method == "GET":
-        is_moderator = request.user.groups.filter(name='Moderators').exists()
         categorySorted = request.session.get('categorysort')
         timeSorted = request.session.get('timesort')
 
@@ -31,14 +30,14 @@ def article_main(request):
 
         choice_list = [val[0] for val in Article.category.field.choices]
         choice_list = set(choice_list) - {categorySorted}
-        context = {"articles": article, "choices": choice_list, "selected": categorySorted, "timesorted": timeSorted, 'is_moderator': is_moderator}
+        context = {"articles": article, "choices": choice_list, "selected": categorySorted, "timesorted": timeSorted}
         template = loader.get_template("main.html")
         return HttpResponse(template.render(context, request))
     if request.method == "POST":
         if request.POST['form-id'] == 'Clear':
-            if request.session['categorysort']:
+            if 'categorysort' in request.session:
                 del request.session['categorysort']
-            if request.session['timesort']:
+            if 'timesort' in request.session:
                 del request.session['timesort']
         elif request.POST['form-id'] == 'Sort':
             data = request.POST

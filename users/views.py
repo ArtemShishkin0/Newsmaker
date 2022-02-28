@@ -49,6 +49,7 @@ def profile(request, pk=None):
         else:
             context = {'req_user': req_user, 'req_user_info': req_user_info}
         template = loader.get_template("profile.html")
+
         return HttpResponse(template.render (context, request))
     if request.method == "POST":
         if request.POST.get('password'):
@@ -86,8 +87,6 @@ def profile(request, pk=None):
         else:       #обработать конкретную форму
             data = request.POST
 
-            #img = request.FILES['userimg']
-            #print(img)
             user = User.objects.get(username=pk)
             user_info = Info.objects.get(name=request.user)
             user.first_name = data.get("first_name")
@@ -95,14 +94,14 @@ def profile(request, pk=None):
             user.email = data.get("email")
             if data.get('age') != "":
                 try:
-                    age = int(data.get('age'))          #костыль
+                    age = int(data.get('age'))
                     user_info.age = data.get('age')
                 except Exception as err:
                     pass
             else:
                 user_info.age = 0
             if data.get('phone') == "":
-                user_info.phone = 'None'
+                user_info.phone = None    #сделать не none а именно null
             else:
                 user_info.phone = data.get('phone')
             user_info.about = data.get('about')

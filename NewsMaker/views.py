@@ -37,10 +37,11 @@ def login_view(request):
                 except:
                     return redirect('/home')
             else:
-                return HttpResponse("Account is deactivated")
+                return HttpResponse("Please complete email verification")
         else:
             return HttpResponse("Invalid login data")
 
 def logout_view(request):
     logout(request)
     return redirect('/home')
+

@@ -8,6 +8,7 @@ import math
 from django.utils import timezone
 from django.utils.deconstruct import deconstructible
 from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor.fields import RichTextField
 
 from ckeditor.widgets import CKEditorWidget
 
@@ -25,7 +26,7 @@ class PathAndRename(object):
         return os.path.join(self.path, filename)
 
 path_and_rename = PathAndRename("articleimages")
-
+#postdelete
 class Article(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)

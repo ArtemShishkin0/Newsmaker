@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
@@ -36,10 +38,10 @@ class Info(models.Model):
             storage.delete(self.photo.name)
         super().delete()
 
-# @receiver(post_delete, sender=Info)
-# def delete_image_hook(sender, instance, using, **kwargs):
-#     print(instance)
-#     instance.photo.delete()
+@receiver(post_delete, sender=Info)
+def delete_image_hook(sender, instance, using, **kwargs):
+     print(instance)
+     os.remove()
 
 admin.site.register(Info)
 

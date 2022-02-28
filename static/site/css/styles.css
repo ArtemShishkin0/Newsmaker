@@ -59,6 +59,10 @@ a:hover {
     color: darkred;
 }
 
+.hovered{
+  color: darkred !important;
+}
+
 .container{
     padding-right: 15px;
     padding-left: 15px;
@@ -341,7 +345,7 @@ position: relative;
   width: 100%;
 }
 
-.article-content-img img{
+.article-content img{
   width: 100%;
 }
 
