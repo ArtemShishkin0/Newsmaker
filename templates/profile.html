@@ -5,11 +5,18 @@
     <div class="profile-content">
       {% if req_user == cur_user %}
       <h1 class="mb-5"> {{ cur_user.username | title }}'s Profile </h1>
+
       <div class="bg-white shadow rounded-lg d-block d-sm-flex">
 				<div class="profile-tab-nav border-right">
 					<div class="p-4">
 						<div class="img-circle text-center mb-3">
-              <form method="POST" enctype="multipart/form-data" id="img">
+              <form method="POST" id="delete_photo" class="no-margin">
+                {% csrf_token %}
+                <button type="submit" name="delete_photo" class="btn-close" aria-label="Remove" style="width: 0.2em !important; height: 0.2em !important;">
+
+                </button>
+              </form>
+              <form method="POST" enctype="multipart/form-data" id="img" class="low-margin">
                 {% csrf_token %}
                 <label>
               {%if cur_user_info.photo %}
@@ -17,10 +24,10 @@
               {% else %}
               <img type="image" src="/media/userimages/defaultuser.png" alt="Image" class="shadow circleimg" id="userimg">
               {% endif %}
-              <input type="file" id="userimg" style="display: none" name="userimg" />
-
+              <input type="file" accept="image/*" id="userimg" style="display: none" name="userimg" class="userimg" />
                 </label>
               </form>
+
 						</div>
 						<h4 class="text-center">{{ cur_user.first_name }} {{ cur_user.last_name }}</h4>
 					</div>
@@ -49,43 +56,44 @@
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>First Name</label>
-								  	<input type="text" class="form-control" value="{{ cur_user.first_name}}" name="first_name">
+								  	<input type="text" class="form-control" value="{{ cur_user.first_name}}" name="first_name" pattern="^[\p{L}'][ \p{L}'-]*[\p{L}]$" maxlength="50">
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>Last Name</label>
-								  	<input type="text" class="form-control" value="{{ cur_user.last_name }}" name="last_name">
+								  	<input type="text" class="form-control" value="{{ cur_user.last_name }}" name="last_name" pattern="^[\p{L}'][ \p{L}'-]*[\p{L}]$" maxlength="50">
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>Email</label>
-								  	<input type="text" class="form-control" value="{{ cur_user.email}}" name="email">
-                    {% if cur_user_info.show_email %} <div id="emailHelp" class="form-text">Everyone will see your email address. To disable it go to privacy settings.</div> {% endif %}
+								  	<input type="email" class="form-control" value="{{ cur_user.email}}" name="email">
+                    {% if cur_user_info.show_email and cur_user.email %} <div id="emailHelp" class="form-text">Everyone will see your email address. To disable it go to privacy settings.</div> {% endif %}
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>Age</label>
-								  	<input type="text" class="form-control" {% if cur_user_info.age != 0 %} value="{{ cur_user_info.age }} " {% endif %} name="age">
+								  	<input type="number" class="form-control" min="1" max="99" {% if cur_user_info.age != 0 %} value="{{ cur_user_info.age }}" {% endif %} name="age">
+
 								</div>
 							</div>
 							<div class="col-md-6">
                 <div class="form-group">
 								  	<label>Phone number</label>
-								  	<input type="text" class="form-control" {% if cur_user_info.phone %} value="{{ cur_user_info.phone }}" {% endif %} name="phone">
-                    {% if cur_user_info.show_phone %}<div id="emailHelp" class="form-text">Everyone will see your phone number. To disable it go to privacy settings.</div> {% endif %}
+								  	<input type="tel" class="form-control" {% if cur_user_info.phone %} value="{{ cur_user_info.phone }}" {% endif %} name="phone" pattern="^[0-9\-\+]{9,15}$">
+                    {% if cur_user_info.show_phone and cur_user_info.phone %}<div id="emailHelp" class="form-text">Everyone will see your phone number. To disable it go to privacy settings.</div> {% endif %}
 								</div>
 							</div>
 							<div class="col-md-12">
 								<div class="form-group">
 								  	<label>About</label>
-									<textarea class="form-control" rows="4" name="about">{{ cur_user_info.about }}</textarea>
+									<textarea class="form-control" rows="4" name="about" maxlength="500">{{ cur_user_info.about }}</textarea>
 								</div>
 							</div>
               <div>
-              <input type="button" class="btn btn-primary right" name="Update" value="Update" onclick="submitForms()">
+              <input type="submit" class="btn btn-primary right" name="Update" value="Update">
               </div>
               </form>
 						</div>
@@ -93,14 +101,23 @@
 
 					</div>
 					<div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
-            <form method="POST">
+            <form method="POST" id="passwordform">
               {% csrf_token %}
 						<h3 class="mb-4">Password Settings</h3>
+            <div class="alert alert-danger alert-dismissible fade show displaynone" role="alert" id='match'>
+              <strong>New passwords do not match. </strong>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show displaynone" role="alert" id='oldpass'>
+              <strong>Old password is wrong. </strong>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade show displaynone" role="alert" id='same'>
+              <strong>Old password is wrong. </strong>
+            </div>
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>Old password</label>
-								  	<input type="password" class="form-control" name="oldpassword">
+								  	<input type="password" class="form-control" name="oldpassword" minlength="8" maxlength="30">
 								</div>
 							</div>
 						</div>
@@ -108,21 +125,41 @@
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>New password</label>
-								  	<input type="password" class="form-control" name="newpassword">
+								  	<input type="password" aria-describedby="passwordhelp" class="form-control" name="newpassword" pattern="^(?=.*\d).{8,30}$">
+                    <div id="passwordhelp" class="form-text"> Password should be 8-30 characters long and contain at least 1 digit</div>
 								</div>
+
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 								  	<label>Confirm new password</label>
-								  	<input type="password" class="form-control" name="confirmpassword">
+								  	<input type="password" class="form-control" name="confirmpassword" pattern="^(?=.*\d).{8,30}$">
 								</div>
 							</div>
 						</div>
-            <input type="submit" class="btn btn-primary right" name="password" value="Update">
+            <input type="text" class="displaynone" value="{{req_user.username}}" name="req_username" id="req_username">
+            <input type="submit" class="btn btn-primary right disabled" name="password" id="applybtn" value="Update">
 						<div>
 						</div>
             </form>
 					</div>
+          <div class="modal fade" id="ModalPassword" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      ...
+      </div>
+      <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+      </div>
+      </div>
+      </div>
 
           <div class="tab-pane fade" id="notification" role="tabpanel" aria-labelledby="notification-tab">
             <form method="POST">
@@ -221,14 +258,91 @@
       </div>
       {% endif %}
       </div>
-     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+     <script>
+        $(document).ready(function () {
+           $('#passwordform').submit(function () {
+             $('#match').addClass('displaynone')
+             $('#same').addClass('displaynone')
+             $('#oldpass').addClass('displaynone')
+               $.ajax({
+                   data: $(this).serialize(),
+                   type: $(this).attr('method'),
+                   url: "{% url 'password_update' %}",
+                   success: function (response){
+                    $("#ModalPassword").modal('show');
+                   },
+                   error: function (response) {
+                       console.log(response.responseJSON.errors)
+                       var x = response.responseJSON.error
+                       if (x == 'match'){
+                         $('#match').removeClass('displaynone')
+                       }
+                       else if(x == 'oldpass'){
+                         $('#oldpass').removeClass('displaynone')
+                       }
+                       else if (x == 'same'){
+                         $('#same').removeClass('displaynone')
+                       }
+                   }
+               });
+               return false;
+           })
+         });
+      </script>
       <script>
-        submitForms = function(){
-            document.getElementById("img").submit();
-            document.getElementById("data").submit();
+        var img = document.querySelector('.userimg');
+        img.onchange = function() {
+          document.getElementById('img').submit();
+        }
+       </script>
+       <script>
+         $('input[name=newpassword], input[name=confirmpassword], input[name=oldpassword]').on('change', function () {
+          var password   = $('input[name=newpassword]'),
+              repassword = $('input[name=confirmpassword]'),
+              oldpassword = $('input[name=oldpassword]'),
+              okay = false,
+              nomatch1 = $('<div class="invalid-feedback d-block" id="matcherror1">Passwords do not match.</div>'),
+              nomatch2 = $('<div class="invalid-feedback d-block" id="matcherror2">Passwords do not match.</div>'),
+              both       = password.add(repassword).removeClass('is-invalid');
+              $('#matcherror1').remove();
+              $('#matcherror2').remove();
+
+          password.addClass(
+              password.val().length > 0 ? 'is-invalid' : ''
+          );
+          repassword.addClass(
+              password.val().length > 0 ? 'is-invalid' : ''
+          );
+
+          if (password.val() != repassword.val()) {
+              both.addClass('is-invalid')
+              password.after(nomatch1)
+              repassword.after(nomatch2)
+              $('#applybtn').addClass('disabled')
+              okay = false
 
           }
-      </script>
+          else {
+            both.removeClass('is-invalid')
+            $('#matcherror1').remove();
+            $('#matcherror2').remove();
+            $('#applybtn').removeClass('disabled')
+            okay = true
+          }
+          if ((password.is(":invalid")) || (repassword.is(":invalid")) || (oldpassword.is(":invalid") || (oldpassword.val().length == 0) || (both.val().length == 0))){
+            $('#applybtn').addClass('disabled')
+          }
+          else{
+            if ((okay == true)) {
+            $('#applybtn').removeClass('disabled')
+            }
+
+          }
+      });
+    </script>
+
+
   {% endblock %}

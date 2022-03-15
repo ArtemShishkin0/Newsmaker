@@ -59,6 +59,10 @@ a:hover {
     color: darkred;
 }
 
+.hovered{
+  color: darkred !important;
+}
+
 .container{
     padding-right: 15px;
     padding-left: 15px;
@@ -68,6 +72,7 @@ a:hover {
 
 .main-header{
   padding: 0 0 35px 0;
+  background-image: url(img/background.jpg);
 }
 
 .main-header .logo h1 {
@@ -233,6 +238,7 @@ position: relative;
 .publish-thumb{
   display: block;
   margin: auto;
+  width: 100%;
 }
 
 .item-thumb img{
@@ -341,7 +347,7 @@ position: relative;
   width: 100%;
 }
 
-.article-content-img img{
+.article-content img{
   width: 100%;
 }
 
@@ -456,4 +462,39 @@ body {
 
 .displaynone{
   display: none;
+}
+
+.no-margin{
+  margin-block-end: 0px !important;
+  margin-left: 50%;
+}
+
+.low-margin{
+  margin-block-end: 5px !important;
+  margin-top: -10%;
+}
+
+.categories h5{
+  font-size: 15px;
+  line-height: 18px;
+  color: #79828B;
+  font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+  font-style: normal;
+}
+
+.buttons{
+  margin-right: 10px;
+}
+
+.nocontent h1{
+  font-size: 30px;
+  line-height: 18px;
+  color: #79828B;
+  font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+  font-style: normal;
+  text-align: center;
+}
+
+input:invalid {
+  border: 2px dashed red;
 }

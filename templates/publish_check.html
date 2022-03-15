@@ -4,7 +4,7 @@
 
     {% block content %}
     <div class="container-reg">
-      <form method="post" enctype="multipart/form-data">
+      <form method="post" enctype="multipart/form-data" id="articleform">
         {% csrf_token %}
         <div class="form-group">
     <img src='/media/{{ article.thumbnail }}' class="publish-thumb">
@@ -19,12 +19,19 @@
     </div>
     <div class="form-group">
     <label for="content">Article content</label>
-    <textarea class="form-control" id="content" rows="3" name="content" value="{{ article.content }}"></textarea>
+    <textarea form="articleform" class="form-control" id="content" rows="3" name="content">{{ article.content|safe }}</textarea>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+    <script>
+      CKEDITOR.replaceAll();
+    </script>
   </div>
   <div class="form-group">
-    <label for="category">Category (Previous: {{ article.category }})</label>
-      <select class="form-control" id="category" name="category">
-        <option>{{ article.category }} </option>
+    <label for="category">Category (Previous: {{ article.category.all|join:"+" }})</label>
+      <select class="form-control" id="category" name="category" multiple>
+        {% for choice in selected_choices %}
+        <option selected>{{ choice }} </option>
+        {% endfor %}
         {% for choice in choices %}
         <option>{{ choice }}</option>
         {% endfor %}
@@ -34,10 +41,31 @@
     <label for="content">Author</label>
     <input class="form-control" value="{{ article.author }}" disabled> </input>
   </div>
-
-    <button type="submit" class="btn btn-primary right blue">Apply</button>
+  <div class="form-group displaynone" id="declinegroup">
+    <label for="content">Decline reason</label>
+    <textarea form="articleform" class="form-control" id="reason" rows="3" name="reason" placeholder="Enter a decline reason here"></textarea>
+  </div>
+    <button type="submit" name="Apply" class="btn btn-primary right blue ">Apply</button>
+    <button type="button" name="Decline" id="decline" class="btn btn-danger right buttons">Decline</button>
     </form>
-    </div>
 
+    </div>
+    <script>
+      $( function()
+          {
+              var press_count = 0;
+               $("#decline").click(function(event)
+               {
+                    press_count += 1;
+                    if (press_count >= 2){
+                      $('#decline').removeAttr("type").attr("type", "submit");
+                    }
+                    else {
+
+                      $('#declinegroup').removeClass('displaynone')
+                    }
+               });
+          });
+     </script>
 
     {% endblock %}

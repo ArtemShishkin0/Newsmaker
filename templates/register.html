@@ -2,29 +2,59 @@
 {% block title %}Register | Newsmaker {% endblock %}
     {% load static %}
     {% block content %}
+</button>
     <div class="containerf">
-      <form method="post" id="test">
+      <form method="post" id="registerform">
         {% csrf_token %}
         <div class="mb-3" id="userfield">
           <label for="user" class="form-label">Username</label>
-          <input type="user" name="user" class="form-control" id="user" aria-describedby="user">
+          <input type="text" name="user" class="form-control" id="user" aria-describedby="user" required pattern="^[\w_-]{4,20}$">
         </div>
+          <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Finish registration</h5>
+                </div>
+                <div class="modal-body">
+                  Registration is almost finished!
+                   We have sent you an email. Click the link inside to confirm your email adress and then log in with your data.
+                </div>
+                <div class="modal-footer">
+                  <a href="/login/"> <button type="button" class="btn btn-primary">Log in</button> </a>
+                </div>
+              </div>
+            </div>
+  </div>
+        <div>
+          <ul>
+            <li>Username should be 4-20 characters long </li>
+            <li>Username should contain only english characters and digits</li>
+          </ul>
+         </div>
   <div class="mb-3" id="emailfield">
     <label for="email" class="form-label">Email address</label>
-    <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">
+    <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" required>
     <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
   </div>
   <div class="mb-3">
     <label for="password" class="form-label">Password</label>
-    <input type="password" name="password" class="form-control" id="password">
+    <input type="password" name="password" class="form-control" id="password" pattern="^(?=.*\d).{8,30}$" required>
   </div>
+  <div>
+    <ul>
+      <li>Password should be 8-30 characters long </li>
+      <li>Password should contain at least 1 digit</li>
+      <li>Password can contain any characters and special symbols</li>
+    </ul>
+   </div>
   <button type="submit" class="btn btn-primary right blue" id="submitbtn">Continue</button>
 </form>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
       $(document).ready(function () {
-          $('#test').keyup(function () {
+          $('#registerform').keyup(function () {
               $.ajax({
                   data: $(this).serialize(),
                   url: "{% url 'validate_data' %}",
@@ -76,4 +106,23 @@
           });
       })
      </script>
+     <script>
+      $(document).ready(function () {
+          $('#registerform').submit(function () {
+              $.ajax({
+                  data: $(this).serialize(),
+                  type: $(this).attr('method'),
+                  url: "{% url 'register_validation' %}",
+                  success: function (response) {
+                       $("#staticBackdrop").modal('show');
+                  },
+                  error: function (response) {
+                      alert("Error: "+ response.responseJSON.error);
+                      console.log(response.responseJSON.errors)
+                  }
+              });
+              return false;
+          });
+      })
+  </script>
   {% endblock %}

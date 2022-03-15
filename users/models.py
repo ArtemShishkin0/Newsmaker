@@ -3,21 +3,9 @@ import os
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import admin
-from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.db.models.signals import post_delete
 from phonenumber_field.modelfields import PhoneNumberField
-
-# class ImageQuerySet(models.QuerySet):
-#     def delete(self, *args, **kwargs):
-#         print(self)
-#         for obj in self:
-#             print(obj)
-#             storage = obj.photo.storage
-#             if storage.exists(obj.photo.name):
-#                 storage.delete(obj.photo.name)
-#             obj.photo.delete()
-#             obj.img.delete()
-#         super(ImageQuerySet, self).delete(*args, **kwargs)
 
 class Info(models.Model):
     #object = ImageQuerySet.as_manager()
@@ -30,20 +18,13 @@ class Info(models.Model):
     show_phone = models.BooleanField(default=True)
 
     def __str__(self):
-        return str(self.name)
-
-    def delete(self, using=None, keep_parents=False):
-        storage = self.photo.storage
-        if storage.exists(self.photo.name):
-            storage.delete(self.photo.name)
-        super().delete()
-
-@receiver(post_delete, sender=Info)
-def delete_image_hook(sender, instance, using, **kwargs):
-     print(instance)
-     os.remove()
+        return str(self.name).capitalize()
 
 admin.site.register(Info)
 
-
-
+@receiver(post_delete, sender=Info, dispatch_uid='info_delete_signal')
+def delete_clean(sender, instance, using, **kwargs):
+    try:
+        os.remove(instance.photo.path)
+    except Exception as err:
+        print(err)

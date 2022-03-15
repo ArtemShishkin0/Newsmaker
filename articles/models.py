@@ -5,6 +5,9 @@ from uuid import uuid4
 import os
 
 import math
+
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.deconstruct import deconstructible
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -20,32 +23,27 @@ class PathAndRename(object):
 
     def __call__(self, instance, filename):
         ext = filename.split('.')[-1]
-        # set filename as random string
         filename = '{}.{}'.format(uuid4().hex, ext)
-        # return the whole path to the file
         return os.path.join(self.path, filename)
 
 path_and_rename = PathAndRename("articleimages")
-#postdelete
+
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return str(self.name)
+
 class Article(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     id = models.IntegerField(primary_key=True)
     description = models.TextField(max_length=150)
-    content = RichTextUploadingField()
+    content = RichTextUploadingField(max_length=30000)
     created = models.DateTimeField(auto_now_add=True)
     thumbnail = models.ImageField(blank=True, upload_to=path_and_rename)
-    OTHER = 'Other'
-    TECHNOLOGIES = 'Technologies'
-    NATURE = 'Nature'
-
-    CATEGORIES = [
-        (OTHER, 'Other'),
-        (TECHNOLOGIES, "Technologies"),
-        (NATURE, 'Nature')
-    ]
-    category = models.CharField(choices=CATEGORIES, default=OTHER, max_length=100)
     active = models.BooleanField(default=False)
+    category = models.ManyToManyField(Category)
 
     def __str__(self):
         return f"{self.author} - {self.title} - {self.created.strftime('%d.%m.%Y %H:%M')}"
@@ -105,10 +103,13 @@ class Article(models.Model):
             else:
                 return str(years) + " years ago"
 
-    def delete(self, using=None, keep_parents=False):
-        storage = self.thumbnail.storage
-        if storage.exists(self.thumbnail.name):
-            storage.delete(self.thumbnail.name)
-        super().delete()
 
 admin.site.register(Article)
+admin.site.register(Category)
+
+@receiver(post_delete, sender=Article, dispatch_uid='article_delete_signal')
+def delete_clean(sender, instance, using, **kwargs):
+    try:
+        os.remove(instance.thumbnail.path)
+    except Exception as err:
+        print(err)

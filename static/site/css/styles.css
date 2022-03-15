@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@1,700&display=swap');
+</style>
+
 
 .body{
   background-color:
@@ -26,7 +29,7 @@
 }
 
 .top-header{
-  border-bottom: 1px solid #dddddd;
+  /* border-bottom: 1px solid #dddddd; */
 }
 
 .top-header a {
@@ -51,6 +54,14 @@ a{
     word-break: break-word;
 }
 
+.logo a{
+  color: white !important;
+  text-decoration: none !important;
+  word-break: break-word;
+  font-size: 2em;
+  font-family: 'Noto Serif Display', serif;
+}
+
 a:visited{
   color: #0d6efd;
 }
@@ -71,7 +82,31 @@ a:hover {
 }
 
 .main-header{
+  background-image: url(img/background3.jpg);
+  box-sizing: border-box;
+  display: block;
+  overflow: visible;
+  position: relative;
+}
+
+.overlay{
+  background: rgba(9, 10, 30, .3);
   padding: 0 0 35px 0;
+}
+
+/* .main-header::before{
+  background: rgba(9, 10, 30, .6);
+  content: "";
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+} */
+
+.container::before{
+  content: "";
+  clear: both;
 }
 
 .main-header .logo h1 {
@@ -146,6 +181,7 @@ a:hover {
   flex-direction: column;
   flex: 1 1;
   height: 100%;
+  margin-right: 30px;
 }
 
 
@@ -159,6 +195,7 @@ a:hover {
     flex-direction: column;
     justify-content: space-between;
     flex: 1 1;
+    margin-bottom: 30px;
 }
 .item-content h5{
   font-size: 20px;
@@ -166,6 +203,11 @@ a:hover {
   text-transform: uppercase;
   margin: 0;
   margin-bottom: 10px;
+}
+
+.sort-selectors{
+  width: 10%;
+  display: inline;
 }
 
 .author{
@@ -222,13 +264,14 @@ position: relative;
     flex-wrap: wrap;
     justify-content: flex-start;
     align-content: space-between;
+    padding-left: 30px;
 }
 
 .rowc-publishing{
       margin-right: -15px;
       margin-left: -15px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       flex-wrap: wrap;
       justify-content: flex-start;
       align-content: space-between;
@@ -237,6 +280,7 @@ position: relative;
 .publish-thumb{
   display: block;
   margin: auto;
+  width: 100%;
 }
 
 .item-thumb img{
@@ -460,4 +504,45 @@ body {
 
 .displaynone{
   display: none;
+}
+
+.no-margin{
+  margin-block-end: 0px !important;
+  margin-left: 50%;
+}
+
+.low-margin{
+  margin-block-end: 5px !important;
+  margin-top: -10%;
+}
+
+.categories h5{
+  font-size: 15px;
+  line-height: 18px;
+  color: #79828B;
+  font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+  font-style: normal;
+}
+
+.buttons{
+  margin-right: 10px;
+}
+
+.nocontent h1{
+  font-size: 30px;
+  line-height: 18px;
+  color: #79828B;
+  font-family: CustomSansSerif,'Lucida Grande',Arial,sans-serif;
+  font-style: normal;
+  text-align: center;
+  margin-top: 30px;
+}
+
+input:invalid {
+  border-color: red;
+}
+
+.form-checks{
+  display: flex;
+  justify-content: space-between;
 }

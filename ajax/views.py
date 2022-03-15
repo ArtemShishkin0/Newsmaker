@@ -1,4 +1,6 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.core import serializers
+from articles.models import *
 from django.contrib.auth.models import Group, User
 
 def validate_data(request):
@@ -9,3 +11,4 @@ def validate_data(request):
         'email_is_taken': User.objects.filter(email__iexact=email).exists(),
     }
     return JsonResponse(response)
+

@@ -2,9 +2,8 @@
   <head>
     {% load static %}
     {% load customtags %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
     <script src="https://kit.fontawesome.com/31a80085e6.js" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
-    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,37 +39,34 @@
         </div>
       </div>
       <div class="main-header">
+        <div class="overlay">
         <div class="container">
               <div class="logo">
                 <h1 style="text-align: center;"><a href="/home/">NewsMaker</a></h1>
               </div>
             </div>
       </div>
+    </div>
       <div class="main-nav" id="navbar">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 col-sm-7">
 
-                      <!-- <h1>{{ request.user.username }}</h1>
-                      <h1>/profile/{{request.user.username}}/</h1>
-                      <h1>'/profile/{{request.user.username}}'</h1>
-                      <h1>{{ request.path }}</h1>
-                      <h1>{% if '{{request.user.username}}' is string %} sjsbsfsf {% else %} x1x1x1 {% endif %} </h1> -->
                         <div class="list-menu">
                             <ul class="ul-nav">
                                 <li><a href="/home" {% if request.path == '/home/' %} class="hovered" {% endif %}>Home</a></li>
-                                <li><a href="http://127.0.0.1:8000/profile/{{ request.user.username}}" {% if request.path == '/profile/{{request.user.username}}/' %} class="hovered" {% endif %}>Profile</a></li>
+                                <li><a href="http://127.0.0.1:8000/profile/{{ username }}" {% if profile  %} class="hovered" {% endif %}>Profile</a></li>
                                 {% if request.user|is_moderator %}
-                                <li><a href="http://127.0.0.1:8000/publishing/">Publish</a></li>
+                                <li><a href="http://127.0.0.1:8000/publishing/" {% if request.path == '/publishing/' %} class="hovered" {% endif %}>Publish</a></li>
                                 {% endif %}
-                                <li><a href="/about" {% if request.path == '/about/' %} class="hovered" {% endif %}>About</a></li>
+                                
                             </ul>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-5">
                       <div class="list-menu right">
                           <ul class="ul-nav">
-                              <li><a href="/search"><i class="fa-solid fa-magnifying-glass" {% if request.path == '/search/' %} class="hovered" {% endif %}></i></a></li>
+                              <li><a href="/search" {% if request.path == '/search/' %} class="hovered" {% endif %}><i class="fa-solid fa-magnifying-glass"></i></a></li>
                               <li><a href="/create" {% if request.path == '/create/' %} class="hovered" {% endif %}>WRITE</a></li>
                           </ul>
                     </div>

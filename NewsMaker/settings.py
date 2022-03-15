@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'phonenumber_field',
-    'NewsMaker'
+    'NewsMaker',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
             ],
         },
     },
@@ -128,10 +130,10 @@ TIME_ZONE = 'Europe/Moscow'
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATICFILES_DIRS = [
-    '/home/artem/PycharmProjects/ProjectFinal/NewsMaker/static/site/',
+    f'{BASE_DIR}/static/site/'
 ]
 
-MEDIA_ROOT = '/home/artem/PycharmProjects/ProjectFinal/NewsMaker/media/'
+MEDIA_ROOT = f'{BASE_DIR}/media/'
 MEDIA_URL = '/media/'
 
 CKEDITOR_UPLOAD_PATH="uploads/"
@@ -162,7 +164,14 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'theatemsco777@gmail.com'
-EMAIL_HOST_PASSWORD = 'The_Atem_Sco12'
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
 
 
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'standart',
+        'height': 500,
+        'width': 800,
+    },
+}

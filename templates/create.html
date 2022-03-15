@@ -8,35 +8,40 @@
         {% csrf_token %}
         <div class="form-group">
     <label for="title">Title</label>
-    <input type="text" class="form-control" id="title" name="title" placeholder="Enter title">
+    <input type="text" class="form-control" maxlength="100" id="title" name="title" placeholder="Enter title" aria-describedby="titlehelp">
+    <div id="titlehelp" class="form-text"> Maximum 100 characters are allowed</div>
       </div>
       <div class="form-group">
   <label for="description">Description</label>
-  <input type="text" class="form-control" id="description" name="description" placeholder="Enter short description">
+  <input type="text" class="form-control" id="description" maxlength="150" name="description" placeholder="Enter short description" aria-describedby="descriptionhelp">
+  <div id="descriptionhelp" class="form-text"> Maximum 150 characters are allowed</div>
     </div>
     <div class="form-group">
     <label for="content">Enter text</label>
-    <textarea class="form-control" id="content" rows="3" name="content"></textarea>
+    <textarea class="form-control" id="content" rows="3" name="content" aria-describedby="contenthelp"></textarea>
+    <div id="contenthelp" class="form-text"> Maximum 30 000 characters are allowed</div>
   </div>
-  <div class="form-group">
-  <label for="content">Test ckeditor</label>
   <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
   <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
-  
-</div>
+  <script>
+    CKEDITOR.replaceAll();
+  </script>
+
   <div class="form-group">
  <label for="thumbnail">Article thumbnail</label>
- <input type="file" value="Upload" class="form-control-file" id="thumbnail" name="thumbnail">
+ <input type="file" accept="image/*" value="Upload" class="form-control-file " id="thumbnail" name="thumbnail">
 </div>
   <div class="form-group">
-  <label for="category">Choose category</label>
-  <select class="form-control" id="category" name="category">
+  <label  aria-describedby="categoryhelp" aria-describedby="categoryhelp" for="category">Choose category</label>
+  <select class="form-control" id="category" name="category" multiple >
+
     {% for choice in choices %}
     <option>{{ choice }}</option>
     {% endfor %}
 
 
   </select>
+  <div id="categoryhelp" class="form-text"> Multiple categories can be selected by holding CTRL or LMB</div>
   </div>
 
     <button type="submit" class="btn btn-primary right blue">Submit</button>

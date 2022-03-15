@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
     {% load static %}
     {% block content %}
+    {% if request.path != '/search/' %}
     <div class="sort">
       <div class="col-s">
-        <h5>Sort by </h5> </div>
+        <h3>Sort by </h3> </div>
         <div class="col-sm inl">
         <form action="" method="post">
           {% csrf_token %}
-         <select name="select-category">
+         <select name="select-category" class="form-select sort-selectors">
            {% if not selected %}
            <option value="">category</option>
            {% else %}
@@ -17,7 +18,7 @@
            <option value="{{ choice }}"> {{ choice }} </option>
            {% endfor %}
          </select>
-         <select name="select-timesort">
+         <select name="select-timesort" class="form-select sort-selectors">
            {% if not timesorted %}
            <option value="">time</option>
            {% else %}
@@ -27,36 +28,72 @@
            <option value="Newest">Newest</option>
 
          </select>
-         <input type="submit" name="form-id" value="Sort" class="sortbtn">
-         <input type="submit" name="form-id" value="Clear" class="clearbtn">
+         <input type="submit" name="form-id" value="Sort" class="sortbtn btn btn-primary">
+         <input type="submit" name="form-id" value="Clear" class="clearbtn btn btn-primary">
         </form>
       </div>
     </div>
-    <div class="rowc">
-      {% for article in articles %}
-        <div class="col-md-4 betw">
+    {% else %}
+    <h5 style="font-size: 32px;">Search results: </h5>
+    {% endif %}
+    <div class="rowc infinite-container">
+      {% for article in page_obj %}
+        <div class="col-md-4 betw infinite-item">
             <div class="item-1">
               <div class="item-thumb _ibg shadow">
                 <img src="/media/{{ article.thumbnail }}" alt="Article image">
                </div>
               <div class="item-content shadow">
                 <div>
-                <h5> <a href="article/{{ article.id }}"> {{ article.title }} </a></h5>
+                <h5> <a href="/home/article/{{ article.id }}"> {{ article.title }} </a></h5>
                 <p> {{ article.description }}</p>
                 </div>
                 <div>
                 <span class="author">
                   <a href="/profile/{{article.author}}"> {{ article.author }} </a> </span>
                 <div class="info">
-                <span class="category">{{ article.category }}</span>
-                <span class="time">posted {{ article.whenpublished }} </span>
+                <span class="category">{{ article.category.all|slice:"2"|join:", " }}</span>
+                <span class="time">{{ article.whenpublished }} </span>
                 </div>
                </div>
-
-
                </div>
             </div>
         </div>
+        {% empty %}
+        <div class="nocontent container">
+          <h1>Hmm...looks like there's nothing here.</h1>
+        </div>
         {% endfor %}
     </div>
+    {% if page_obj.has_next %}
+    <div class="d-flex justify-content-center">
+  <div class="spinner-border loading" role="status" style="width: 2rem; height: 2rem; color: #0d6efd; margin-top: 50px;">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+  {% endif %}
+    <div>
+      {% if page_obj.has_next %}
+      <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}" style="display: none">next</a>
+      {% endif %}
+    </div>
+    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'js/infinite.min.js' %}"></script>
+    <script>
+      var infinite = new Waypoint.Infinite({
+      element: $('.infinite-container')[0],
+
+      offset: 'bottom-in-view',
+
+      onBeforePageLoad: function(){
+        $('.loading').show()
+      },
+
+      onAfterPageLoad: function(){
+        $('.loading').hide()
+      }
+
+    })
+    </script>
+
     {% endblock %}

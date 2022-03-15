@@ -29,6 +29,10 @@
         <img src="/media/{{article.thumbnail }}" class="article-thumbnail-img">
         <hr> </hr>
         <p class="article-content-img"> {{ article.content|safe }} </p>
+        <hr>
+        <div class="categories">
+          <h5> {{ article.category.all|join:", "}} </h5>
+         </div>
       </div>
     </article>
 

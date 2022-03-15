@@ -20,9 +20,11 @@ urlpatterns = [
     path('home/article/<int:pk>', article_view),
     path('profile/<str:pk>/', profile),
     path('profile/', profile),
-    path(r'^ckeditor/', include('ckeditor_uploader.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('', RedirectView.as_view(url='home/', permanent=False)),
     path('ajax/', include('ajax.urls')),
+    path('search/', search),
+    path('api/', include('api.urls')),
     path('publishing/', include('publishing.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

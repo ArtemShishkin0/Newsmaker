@@ -1,2 +1,47 @@
 {% extends 'base.html' %}
 {% block title %}Search | Newsmaker {% endblock %}
+{% block content %}
+<div class="containerf">
+  <form method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="searcharea" class="form-label" style="text-align: center">Enter search text</label>
+      <textarea id="searcharea" name="searchtext" class="form-control"></textarea>
+    </div>
+    <div class="form-checks b_choice">
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="FieldsetCheck" name="names" required>
+        <label class="form-check-label" for="FieldsetCheck">
+          Search in names
+        </label>
+      </div>
+    </div>
+    <div class="mb-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="FieldsetCheck2" name="content" required>
+        <label class="form-check-label" for="FieldsetCheck2">
+          Search in content
+        </label>
+      </div>
+    </div>
+    </div>
+    <button type="submit" class="btn btn-primary right blue" id="submitbtn" disabled>Search</button>
+</form>
+  </div>
+  <script>
+    $(function(){
+    var requiredCheckboxes = $('.b_choice :checkbox[required]');
+    requiredCheckboxes.change(function(){
+        if(requiredCheckboxes.is(':checked')) {
+            requiredCheckboxes.removeAttr('required');
+            $('#submitbtn').removeAttr('disabled');
+        } else {
+            requiredCheckboxes.attr('required', 'required');
+            $('#submitbtn').attr('disabled' ,'disabled');
+        }
+    });
+});
+   </script>
+
+{% endblock %}

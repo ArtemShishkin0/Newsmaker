@@ -3,7 +3,13 @@
     {% load static %}
     {% block content %}
     <div class="containerf">
-      <form method="post">
+      <div class="alert alert-danger alert-dismissible fade show displaynone" role="alert" id='incpass'>
+        <strong>Username or password is incorrect! </strong>
+      </div>
+      <div class="alert alert-danger alert-dismissible fade show displaynone" role="alert" id='deactacc'>
+        <strong>Email is not confirmed! </strong>
+      </div>
+      <form method="post" id="loginform">
         {% csrf_token %}
         <div class="mb-3">
           <label for="user" class="form-label">Username</label>
@@ -16,4 +22,40 @@
   <button type="submit" class="btn btn-primary right blue">Log in</button>
 </form>
     </div>
+    <script>
+     $(document).ready(function () {
+         $('#loginform').submit(function () {
+           $('#incpass').addClass('displaynone')
+           $('#deactacc').addClass('displaynone')
+             $.ajax({
+                 data: $(this).serialize(),
+                 type: $(this).attr('method'),
+                 url: "{% url 'login_check' %}",
+                 success: function (response) {
+                   var get_url = new RegExp('\\?next=(.*)')
+                   var text = "{{ request.get_full_path }}"
+                   if (get_url.test(text)){
+                     redirect_link = text.match(get_url)[1]
+                      window.location.replace(redirect_link)
+                   }
+                   else {
+                    window.location.replace('/home')
+                   }
+                 },
+                 error: function (response) {
+                     var x = response.responseJSON.error
+                     if (x == 'data'){
+                       $('#incpass').removeClass('displaynone')
+                     }
+                     else{
+                       $('#deactacc').removeClass('displaynone')
+                     }
+                     console.log(response.responseJSON.errors)
+                 }
+             });
+             return false;
+         });
+     })
+    </script>
+
     {% endblock %}

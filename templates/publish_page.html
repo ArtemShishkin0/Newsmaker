@@ -2,9 +2,9 @@
 {% block title %}Register | Newsmaker {% endblock %}
     {% load static %}
     {% block content %}
-    <div class="rowc-publishing">
-      {% for article in articles %}
-        <div class="article-row">
+    <div class="rowc-publishing infinite-container">
+      {% for article in page_obj %}
+        <div class="article-row infinite-item col-md-3">
             <div class="item-1">
               <div class="item-content shadow">
                 <h5> <a href="article/{{ article.id }}"> {{ article.title }} </a></h5>
@@ -12,12 +12,46 @@
                 <span class="author">
                   <a href="/profile/{{article.author}}"> {{ article.author }} </a> </span>
                 <div class="info">
-                <span class="category">{{ article.category }}</span>
                 <span class="time">created {{ article.whenpublished }} </span>
                </div>
               </div>
             </div>
         </div>
+    {% empty %}
+    </div>
+    <div class="nocontent">
+    <h1>No articles to review...</h1>
+    </div>
     {% endfor %}
               </div>
+              {% if page_obj.has_next %}
+              <div class="d-flex justify-content-center">
+            <div class="spinner-border loading" role="status" style="width: 2rem; height: 2rem; color: #0d6efd; margin-top: 50px;">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+            {% endif %}
+              <div>
+                {% if page_obj.has_next %}
+                <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}" style="display: none">next</a>
+                {% endif %}
+              </div>
+              <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+              <script src="{% static 'js/infinite.min.js' %}"></script>
+              <script>
+                var infinite = new Waypoint.Infinite({
+                element: $('.infinite-container')[0],
+
+                offset: 'bottom-in-view',
+
+                onBeforePageLoad: function(){
+                  $('.loading').show()
+                },
+
+                onAfterPageLoad: function(){
+                  $('.loading').hide()
+                }
+
+              })
+              </script>
   {% endblock %}
