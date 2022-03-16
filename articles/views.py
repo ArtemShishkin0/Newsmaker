@@ -3,24 +3,34 @@ from itertools import chain
 
 from django.core.paginator import Paginator
 from django.http import HttpResponse, JsonResponse
+from django.http.multipartparser import MultiPartParser
 from django.shortcuts import render, redirect
 from django.template import loader
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.parsers import JSONParser
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
-from rest_framework.views import APIView
+
 
 from NewsMaker.functions import simple_sort, max_limit
 from articles.models import *
 from users.views import is_moderator
-from articles.serializers import ArticleSerializer, ArticleCreateSerializer
-from rest_framework import generics
-class article_list(generics.ListCreateAPIView):
+from users.models import Info
+from articles.serializers import ArticleSerializer, ArticleCreateSerializer, ArticlePublishSerializer, ProfilesSerializer
+from rest_framework import generics, permissions
 
+class profiles_list(generics.ListAPIView):
+    serializer_class = ProfilesSerializer
+
+    def get_queryset(self):
+        profiles = Info.objects.all()
+        return profiles
+
+class profile_detail(generics.RetrieveAPIView):
+    serializer_class = ProfilesSerializer
+
+    def get_queryset(self):
+        profile = Info.objects.filter(id=self.kwargs["pk"])
+        return profile
+
+class article_list(generics.ListAPIView):
     serializer_class = ArticleSerializer
 
     def get_queryset(self):
@@ -28,11 +38,33 @@ class article_list(generics.ListCreateAPIView):
         return articles
 
 
-class article_detail(APIView):
-    def get(self, request, pk):
-        articles = Article.objects.get(id=pk, active=True)
-        serializer = ArticleSerializer(articles)
-        return Response(serializer.data)
+class article_create(generics.CreateAPIView):
+    serializer_class = ArticleCreateSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class article_publish(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ArticlePublishSerializer
+
+    def get_queryset(self):
+        article = Article.objects.filter(id=self.kwargs["pk"], active=False)
+        return article
+
+    def check_permissions(self, request):
+        if request.user.groups.filter(name='Moderators').exists():
+            pass
+        else:
+            self.permission_denied(request)
+
+    # def perform_update(self, serializer):
+
+    # def perform_destroy(self, instance):
+
+class article_detail(generics.RetrieveAPIView):
+    serializer_class = ArticleSerializer
+
+    def get_queryset(self):
+        articles = Article.objects.filter(active=True)
+        return articles
 
 def article_main(request):  # view
     if request.method == "GET":
