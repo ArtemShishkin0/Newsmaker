@@ -33,11 +33,12 @@ class ArticleCreateSerializer(serializers.ModelSerializer):
 class ArticlePublishSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field='name', queryset=Category.objects.all(), many=True)
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    active = serializers.HiddenField(default=True)
 
     class Meta:
         model = Article
         # fields = '__all__'
-        exclude = ('active', 'thumbnail')
+        exclude = ('thumbnail',)
         # fields = ['title', 'description', 'content', 'thumbnail', 'category', 'reason', 'author',]
 
 class ProfilesSerializer(serializers.ModelSerializer):

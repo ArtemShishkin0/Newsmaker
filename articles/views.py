@@ -42,6 +42,19 @@ class article_create(generics.CreateAPIView):
     serializer_class = ArticleCreateSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+class article_publish_list(generics.ListAPIView):
+    serializer_class = ArticlePublishSerializer
+
+    def get_queryset(self):
+        articles = Article.objects.filter(active=False)
+        return articles
+
+    def check_permissions(self, request):
+        if request.user.groups.filter(name='Moderators').exists():
+            pass
+        else:
+            self.permission_denied(request)
+
 class article_publish(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ArticlePublishSerializer
 

@@ -11,7 +11,7 @@ def simple_sort(categorySorted, timeSorted, Article=Article):
     if not categorySorted and not timeSorted:
         article = Article.objects.all().filter(active=True).order_by('-created')
     elif categorySorted and not timeSorted:
-        article = Article.objects.all().filter(category__name=categorySorted, active=True).order_by('created')
+        article = Article.objects.all().filter(category__name=categorySorted, active=True).order_by('-created')
     elif categorySorted and timeSorted:
         if timeSorted == 'Newest':
             article = Article.objects.all().filter(category__name=categorySorted, active=True).order_by('-created')
